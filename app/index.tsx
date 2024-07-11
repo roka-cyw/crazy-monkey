@@ -1,16 +1,25 @@
 import React from 'react'
-import { View, Text, ImageBackground } from 'react-native'
+import { Image, TouchableWithoutFeedback, View } from 'react-native'
+import { useRouter } from 'expo-router'
+
+import SharedScreen from '@/components/SharedScreen'
 
 import bg from '@/assets/bg-port.png'
+import logoBig from '@/assets/logo-big.png'
+import tapScreen from '@/assets/tap-screen.png'
 
 const App = () => {
-  return (
-    <View className='flex-1'>
-      <ImageBackground source={bg} resizeMode='cover' className='flex-1'></ImageBackground>
+  const router = useRouter()
 
-      {/* <Image></Image> */}
-      {/* <Image></Image> */}
-    </View>
+  return (
+    <SharedScreen bg={bg}>
+      <TouchableWithoutFeedback onPress={() => router.push('/daily-bonus')}>
+        <View className='flex-1 justify-between items-center'>
+          <Image source={logoBig} resizeMode='cover' className='mt-14' />
+          <Image source={tapScreen} resizeMode='cover' />
+        </View>
+      </TouchableWithoutFeedback>
+    </SharedScreen>
   )
 }
 
