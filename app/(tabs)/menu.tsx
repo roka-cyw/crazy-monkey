@@ -20,10 +20,7 @@ const Menu = () => {
     require('@/assets/buttons/rules.png')
   ]
 
-  const handleButtonClick = (item: string) => () => {
-    // router.push(`/${item}`)
-    console.log(`${item}`)
-  }
+  const handleButtonClick = (item: string) => () => router.push(`/${item}`)
 
   // It has to be modal
   const handleSettingsClick = () => router.push(`/settings`)

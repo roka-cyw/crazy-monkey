@@ -3,11 +3,13 @@ import { Image, TouchableWithoutFeedback, View } from 'react-native'
 import { useRouter } from 'expo-router'
 
 import SharedScreen from '@/components/SharedScreen'
+import { usePortraitOrientation } from '@/hooks/useOrientation'
 
 import logo from '@/assets/logo.png'
 import tapScreen from '@/assets/tap-screen.png'
 
 const App = () => {
+  usePortraitOrientation()
   const router = useRouter()
 
   const handleButtonClick = () => router.push('/daily-bonus')
