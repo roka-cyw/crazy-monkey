@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useFonts } from 'expo-font'
-import { Slot, Stack } from 'expo-router'
+import { Slot } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import 'react-native-reanimated'
 

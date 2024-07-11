@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, TouchableOpacity, Image, ImageSourcePropType } from 'react-native'
+import { TouchableOpacity, Image, ImageSourcePropType } from 'react-native'
 
 interface CustomButtonProps {
   image: ImageSourcePropType
