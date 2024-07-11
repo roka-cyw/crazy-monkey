@@ -18,11 +18,16 @@ const DailyBonus = () => {
     <SharedScreen isDarkened={true}>
       <View className='flex-1'>
         <View className='flex-1 justify-start items-center'>
-          <Image source={bonusLogo} resizeMode='cover' className='mt-14' />
-          <Image source={bonus} resizeMode='cover' />
+          <Image source={bonusLogo} resizeMode='cover' className='mt-14 max-h-[180px] max-w-[308px]' />
+          <Image source={bonus} resizeMode='cover' className='max-h-[64px] max-w-[244px]' />
         </View>
         <View>
-          <CustomButton image={getIt} containerStyles={'bottom-10'} onPress={handleButtonClick} />
+          <CustomButton
+            image={getIt}
+            containerStyles={'bottom-10'}
+            buttonStyles={'max-h-[68px] max-w-[182px]'}
+            onPress={handleButtonClick}
+          />
         </View>
       </View>
     </SharedScreen>

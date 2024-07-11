@@ -16,8 +16,8 @@ const App = () => {
     <SharedScreen isDarkened={false}>
       <TouchableWithoutFeedback onPress={handleButtonClick}>
         <View className='flex-1 justify-between items-center'>
-          <Image source={logo} resizeMode='cover' className='mt-14' />
-          <Image source={tapScreen} resizeMode='cover' />
+          <Image source={logo} resizeMode='cover' className='mt-14 max-h-[294px] max-w-[294px]' />
+          <Image source={tapScreen} resizeMode='cover' className='max-w-64 max-h-12' />
         </View>
       </TouchableWithoutFeedback>
     </SharedScreen>
