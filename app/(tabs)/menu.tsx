@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 
 import SharedScreen from '@/components/SharedScreen'
 import CustomButton from '@/components/CustomButton'
+import IconButton from '@/components/IconButton'
 
 import logo from '@/assets/logo.png'
 import settings from '@/assets/buttons/settings.png'
@@ -28,7 +29,7 @@ const Menu = () => {
   return (
     <SharedScreen isDarkened={false}>
       <View className='flex-1'>
-        <CustomButton
+        <IconButton
           image={settings}
           onPress={handleSettingsClick}
           containerStyles='absolute top-4 left-4 z-10'
