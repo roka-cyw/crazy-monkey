@@ -37,6 +37,8 @@ const Start = () => {
           containerStyles='absolute top-5 left-0 z-10'
           buttonStyles={'max-h-[36px] max-w-[36px]'}
         />
+
+        <Scene width={width} height={height} />
       </View>
     </SharedScreen>
   )

@@ -1,7 +1,7 @@
 import React from 'react'
+import { ImageSourcePropType } from 'react-native'
 
 import CustomButton from './CustomButton'
-import { ImageSourcePropType } from 'react-native'
 
 interface Props {
   image: ImageSourcePropType
