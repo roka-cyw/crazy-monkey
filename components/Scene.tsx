@@ -12,6 +12,11 @@ import home from '@/assets/buttons/home.png'
 import bg from '@/assets/main-game/bg-default.png'
 import groundStart from '@/assets/main-game/ground-start.png'
 import ground from '@/assets/main-game/ground.png'
+import Monkey from './Monkey'
+import SpriteAnimation from './Monkey3'
+
+import { View } from 'react-native'
+// import SpriteAnimation from './Monkey2'
 // import monkey from '@/assets/main-game/monkey.png'
 
 // import Ground from './Ground'
@@ -82,7 +87,24 @@ const Scene: React.FC<Props> = ({ width, height }) => {
           {/* // Grounds */}
           {/* <Grounds2 width={width} height={height} /> */}
           {/* <Circle r={50} cx={100} cy={100} color='red' /> */}
+          {/* <Monkey width={width} height={height} x={80} y={0} /> */}
           <Grounds width={width} height={height} />
+          <Monkey width={width} height={height} />
+          {/* <SpriteAnimation
+            spriteSheet={require('../assets/monkey/run.png')}
+            frameWidth={200}
+            frameHeight={200}
+            totalFrames={60}
+            duration={20000}
+          /> */}
+
+          {/* <SpriteAnimation
+            source={require('../assets/monkey/sprite.png')}
+            width={64} // Width of a single frame
+            height={64} // Height of a single frame
+            totalFrames={8} // Total number of frames in your sprite sheet
+            fps={12}
+          /> */}
 
           {/* <Text className='text-4xl text-white font-bold'>CANVAS</Text> */}
           {/* </View>/ */}
