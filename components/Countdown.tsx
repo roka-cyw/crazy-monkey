@@ -1,117 +1,76 @@
-import React, { useEffect, useState } from 'react'
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useDerivedValue,
-  useSharedValue,
-  withSequence,
-  withTiming
-} from 'react-native-reanimated'
-import { useImage } from '@shopify/react-native-skia'
-import { Image, View } from 'react-native'
-
-import count3 from '@/assets/countdown/3.png'
-import count2 from '@/assets/countdown/2.png'
-import count1 from '@/assets/countdown/1.png'
-import tapScreen from '@/assets/tap-screen.png'
+import React, { useEffect } from 'react'
+import { Group, Image, useImage } from '@shopify/react-native-skia'
+import { useDerivedValue, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated'
 
 interface Props {
-  isStartGame: boolean
+  width: number
+  height: number
   setStartGame: React.Dispatch<React.SetStateAction<boolean>>
-  setDarkened: React.Dispatch<React.SetStateAction<boolean>>
+  setCountdownWasShowed: React.Dispatch<React.SetStateAction<boolean>>
+  onFinish?: () => void
 }
 
-const Countdown: React.FC<Props> = ({ isStartGame, setStartGame, setDarkened }) => {
-  const countdownImages = [count3, count2, count1]
+const Countdown: React.FC<Props> = ({ width, height, setStartGame, setCountdownWasShowed, onFinish }) => {
+  const number3 = useImage(require('../assets/countdown/3.png'))
+  const number2 = useImage(require('../assets/countdown/2.png'))
+  const number1 = useImage(require('../assets/countdown/1.png'))
+
+  const countdownValue = useSharedValue(3)
   const opacity = useSharedValue(1)
-  const countdownIndex = useSharedValue(0)
+  const scale = useSharedValue(1)
 
-  const digits = [
-    useImage(require('@/assets/countdown/3.png')),
-    useImage(require('@/assets/countdown/2.png')),
-    useImage(require('@/assets/countdown/1.png'))
-  ]
+  const imageWidth = width / 3
+  const imageHeight = height / 3
 
-  //   const imageIndex = useDerivedValue(() => )
+  useEffect(() => {
+    setTimeout(updateCountdown, 1000)
+  }, [])
 
-  //   const [darkened, setDarkened] = useState(true)
-  //   const [isStartGame, setStartGame] = useState(false)
-  //   const [showGameOver, setShowGameOver] = useState(false)
+  const currentImage = useDerivedValue(() => {
+    if (countdownValue.value === 3) return number3
+    if (countdownValue.value === 2) return number2
+    return number1
+  }, [countdownValue, number1, number2, number3])
 
-  //   useEffect(() => {
-  //     if (!isStartGame) {
-  //       startCountdown()
-  //     }
-  //   }, [isStartGame])
+  const transform = useDerivedValue(() => [{ scale: scale.value }], [scale])
 
-  //   const animatedStyle = useAnimatedStyle(() => {
-  //     return {
-  //       opacity: opacity.value,
-  //       transform: [{ scale: opacity.value }]
-  //     }
-  //   })
+  const updateCountdown = () => {
+    // Fade out and shrink
+    opacity.value = withTiming(0, { duration: 250 })
+    scale.value = withTiming(0.8, { duration: 250 }, finished => {
+      if (finished) {
+        if (countdownValue.value > 1) {
+          // Fade in and grow
+          countdownValue.value -= 1
+          opacity.value = withTiming(1, { duration: 250 })
+          scale.value = withTiming(1, { duration: 250 }, finished => {
+            // Schedule next update
+            if (finished) {
+              runOnJS(setTimeout)(updateCountdown, 500)
+            }
+          })
+        } else {
+          if (onFinish) runOnJS(onFinish)()
 
-  //   const startCountdown = () => {
-  //     countdownIndex.value = 0
-  //     opacity.value = 1
-
-  //     const animateNumber = () => {
-  //       opacity.value = withSequence(withTiming(1, { duration: 300 }), withTiming(0, { duration: 700 }))
-
-  //       countdownIndex.value = withTiming(countdownIndex.value + 1, { duration: 1000 }, finished => {
-  //         if (finished && countdownIndex.value < 3) {
-  //             // countdownIndex.value = prevValue
-  //           runOnJS(animateNumber)()
-  //         } else if (finished) {
-  //           runOnJS(setStartGame)(false)
-  //           runOnJS(setDarkened)(false)
-  //         }
-  //       })
-  //     }
-
-  //     animateNumber()
-  //   }
-
-  //   const startCountdown = () => {
-  //     countdownIndex.value = 0
-  //     opacity.value = 1
-
-  //     const animateNumber = () => {
-  //       const currentIndex = Math.floor(countdownIndex.value)
-
-  //       opacity.value = withSequence(
-  //         withTiming(1, { duration: 300 }),
-  //         withTiming(1, { duration: 400 }), // Hold the number visible
-  //         withTiming(0, { duration: 300 })
-  //       )
-
-  //       countdownIndex.value = withTiming(currentIndex + 1, { duration: 1000 }, finished => {
-  //         if (finished) {
-  //           if (currentIndex < 2) {
-  //             // Change this to 2 to show 3 numbers (0, 1, 2)
-  //             runOnJS(animateNumber)()
-  //           } else {
-  //             runOnJS(setStartGame)(false)
-  //             runOnJS(setDarkened)(false)
-  //           }
-  //         }
-  //       })
-  //     }
-
-  //     animateNumber()
-  //   }
+          runOnJS(setStartGame)(true)
+          runOnJS(setCountdownWasShowed)(true)
+        }
+      }
+    })
+  }
 
   return (
-    <View className='flex-1 justify-center items-center'>
-      <Image source={tapScreen} resizeMode='contain' className='max-w-64 max-h-12' />
-    </View>
+    <Group transform={transform} origin={{ x: width / 2, y: height / 3 }}>
+      <Image
+        image={currentImage}
+        x={(width - imageWidth) / 2}
+        y={(height - imageHeight) / 3}
+        width={imageWidth}
+        height={imageHeight}
+        opacity={opacity}
+      />
+    </Group>
   )
-  // <Animated.Image
-  //   //   source={countdownImages[]}
-  //   source={countdownImages[Math.min(2, Math.floor(countdownIndex.value))]}
-  //   style={[animatedStyle, { width: 128, height: 128 }]}
-  //   resizeMode='contain'
-  // />
 }
 
 export default Countdown

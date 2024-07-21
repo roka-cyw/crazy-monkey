@@ -1,5 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { useSharedValue, withRepeat, withTiming, useDerivedValue, Easing } from 'react-native-reanimated'
+import {
+  useSharedValue,
+  withRepeat,
+  withTiming,
+  useDerivedValue,
+  Easing,
+  cancelAnimation
+} from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
 import GroundPiece from './GroundPiece'
@@ -7,6 +14,7 @@ import GroundPiece from './GroundPiece'
 interface Props {
   width: number
   height: number
+  isStartGame: boolean
 }
 
 const ANIMATION_DURATION = 6000
@@ -16,7 +24,7 @@ const ORIGINAL_GROUND_WIDTH = 900
 const ORIGINAL_GROUND_HEIGHT = 176
 const ASPECT_RATIO = ORIGINAL_GROUND_WIDTH / ORIGINAL_GROUND_HEIGHT
 
-const Ground: React.FC<Props> = ({ width, height }) => {
+const Ground: React.FC<Props> = ({ width, height, isStartGame }) => {
   const animationProgress = useSharedValue(0)
 
   const ground = useImage(require('@/assets/main-game/ground.png')) // TODO: update assets as ground2
@@ -27,8 +35,10 @@ const Ground: React.FC<Props> = ({ width, height }) => {
   const totalWidth = groundWidth * numImages
 
   useEffect(() => {
-    moveGrounds()
-  }, [])
+    if (isStartGame) moveGrounds()
+
+    return () => cancelAnimation(animationProgress)
+  }, [isStartGame])
 
   const moveGrounds = () => {
     animationProgress.value = withRepeat(
@@ -59,7 +69,7 @@ const Ground: React.FC<Props> = ({ width, height }) => {
       width={groundWidth}
       height={groundHeight}
       x={calculatePosition(index)}
-      y={height - groundHeight * 1.5}
+      y={height - groundHeight / 1.5}
     />
   ))
 }

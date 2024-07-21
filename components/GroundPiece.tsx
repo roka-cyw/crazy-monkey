@@ -2,7 +2,7 @@ import React from 'react'
 import { Image, SkImage } from '@shopify/react-native-skia'
 import { SharedValue } from 'react-native-reanimated'
 
-interface GroundPieceProps {
+interface Props {
   ground: SkImage | null
   width: number
   height: number
@@ -10,7 +10,7 @@ interface GroundPieceProps {
   y: number
 }
 
-const GroundPiece: React.FC<GroundPieceProps> = ({ ground, width, height, x, y }) => {
+const GroundPiece: React.FC<Props> = ({ ground, width, height, x, y }) => {
   if (!ground) return null
 
   return <Image image={ground} width={width} height={height} x={x} y={y} />

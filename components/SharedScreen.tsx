@@ -6,7 +6,7 @@ import bg from '@/assets/bg-port.png'
 interface Props {
   image?: ImageSourcePropType
   children: React.ReactElement
-  isDarkened: boolean
+  isDarkened?: boolean
 }
 
 const SharedScreen: React.FC<Props> = ({ image, children, isDarkened }) => {

@@ -1,25 +1,18 @@
-import React, { useState } from 'react'
-import { View, Text, ImageBackground, useWindowDimensions } from 'react-native'
+import React from 'react'
+import { View, Text, useWindowDimensions } from 'react-native'
 import { useRouter } from 'expo-router'
-import { useLandscapeOrientation } from '@/hooks/useOrientation'
 
+import { useLandscapeOrientation } from '@/hooks/useOrientation'
 import SharedScreen from '@/components/SharedScreen'
-import CustomButton from '@/components/CustomButton'
 import IconButton from '@/components/IconButton'
 import Scene from '@/components/Scene'
 
 import home from '@/assets/buttons/home.png'
 import bg from '@/assets/main-game/bg-default.png'
 
-// Scene ----> background, platforms, ground
-// Monkey
-// info container ----> coins + healt || home btn
-
 const Start = () => {
   const router = useRouter()
   const { width, height } = useWindowDimensions()
-
-  const [darkened, setDarkened] = useState(false)
 
   // UseEffect func
   useLandscapeOrientation()
@@ -27,10 +20,8 @@ const Start = () => {
   const handleHomeClick = () => router.push(`/menu`)
 
   return (
-    <SharedScreen isDarkened={darkened} image={bg}>
+    <SharedScreen image={bg}>
       <View className='flex-1 justify-center items-center'>
-        <Text className='text-4xl text-white font-bold'>Start game!</Text>
-
         <IconButton
           image={home}
           onPress={handleHomeClick}
@@ -42,69 +33,6 @@ const Start = () => {
       </View>
     </SharedScreen>
   )
-  // return (
-  //   <>
-  //     <Scene />
-
-  //     <CustomButton
-  //       image={home}
-  //       onPress={handleHomeClick}
-  //       containerStyles='absolute top-5 left-8 z-10'
-  //       buttonStyles={'max-h-[36px] max-w-[36px]'}
-  //     />
-  //   </>
-  // )
-
-  // <View className='flex-1 justify-center items-center'>
-  {
-    /* <View className=''> */
-  }
-  {
-    /* <View>
-          <Image source={coins} resizeMode='cover' />
-          <Image source={health} resizeMode='cover' />
-        </View> */
-  }
-
-  {
-    /* HOME BUTTON */
-  }
-  {
-    /* </View> */
-  }
-
-  {
-    /* <SharedScreen isDarkened={false}></SharedScreen> */
-  }
-
-  {
-    /* <View className='flex-1'>
-        <ImageBackground source={bg} resizeMode='cover' className='flex-1'></ImageBackground>
-        </View> */
-  }
-
-  {
-    /* <View className='bg'></View>
-      <View className='ground'></View>
-      <View className='monkey'></View>
-      <View className='obstacles'></View> */
-  }
-
-  {
-    /* <View>
-        <CustomButton
-        image={home}
-        onPress={handleHomeClick}
-        containerStyles='absolute top-4 left-4 z-10'
-        buttonStyles={'max-h-[36px] max-w-[36px]'}
-        />
-        <Text>Start</Text>
-      </View> */
-  }
-  {
-    /* </View> */
-  }
-  // )
 }
 
 export default Start
