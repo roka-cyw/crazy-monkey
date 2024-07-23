@@ -18,15 +18,7 @@ const Monkey: React.FC<Props> = ({ width, height, isStartGame }) => {
   const dead = useAnimatedImageValue(require('../assets/monkey/dead.gif'))
 
   // TODO: y has test formula. It has to be changed after using the original assets instead of the actual
-  return (
-    <Image
-      image={isStartGame ? run : stand}
-      width={MONKEY_WIDTH}
-      height={MONKEY_HEIGHT}
-      x={0}
-      y={height - MONKEY_HEIGHT / 1.12}
-    />
-  )
+  return <Image image={isStartGame ? run : stand} width={MONKEY_WIDTH} height={MONKEY_HEIGHT} x={0} y={height - MONKEY_HEIGHT / 1.12} />
 }
 
 export default Monkey

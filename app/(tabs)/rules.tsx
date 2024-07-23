@@ -3,7 +3,7 @@ import React from 'react'
 
 const Rules = () => {
   return (
-    <View className='flex-1 justify-center items-center'>
+    <View className="flex-1 justify-center items-center">
       <Text>Rules</Text>
     </View>
   )

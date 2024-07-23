@@ -57,12 +57,7 @@ const Scene: React.FC<Props> = ({ width, height }) => {
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height }}>
           {!countdownWasShowed && !isStartGame && (
-            <Countdown
-              width={width}
-              height={height}
-              setStartGame={setStartGame}
-              setCountdownWasShowed={setCountdownWasShowed}
-            />
+            <Countdown width={width} height={height} setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} />
           )}
 
           <Grounds width={width} height={height} isStartGame={isStartGame} />

@@ -7,7 +7,7 @@ const CrazyLians = () => {
   useLandscapeOrientation()
 
   return (
-    <View className='flex-1 justify-center items-center'>
+    <View className="flex-1 justify-center items-center">
       <Text>CrazyLians</Text>
     </View>
   )

@@ -1,12 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import {
-  useSharedValue,
-  withRepeat,
-  withTiming,
-  useDerivedValue,
-  Easing,
-  cancelAnimation
-} from 'react-native-reanimated'
+import React, { useEffect } from 'react'
+import { useSharedValue, withRepeat, withTiming, useDerivedValue, Easing, cancelAnimation, DerivedValue } from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
 import GroundPiece from './GroundPiece'
@@ -38,14 +31,10 @@ const Ground: React.FC<Props> = ({ width, height, isStartGame }) => {
     if (isStartGame) moveGrounds()
 
     return () => cancelAnimation(animationProgress)
-  }, [isStartGame])
+  }, [isStartGame, animationProgress, moveGrounds])
 
   const moveGrounds = () => {
-    animationProgress.value = withRepeat(
-      withTiming(1, { duration: ANIMATION_DURATION, easing: Easing.linear }),
-      -1,
-      false
-    )
+    animationProgress.value = withRepeat(withTiming(1, { duration: ANIMATION_DURATION, easing: Easing.linear }), -1, false)
   }
 
   // const calculatePosition = useDerivedValue(() => {
@@ -53,7 +42,7 @@ const Ground: React.FC<Props> = ({ width, height, isStartGame }) => {
   //   return position < -groundWidth ? position + totalWidth : position
   // })
 
-  const calculatePosition = (index: number) => {
+  const calculatePosition = (index: number): DerivedValue<number> => {
     return useDerivedValue(() => {
       const position = (-totalWidth * animationProgress.value + index * groundWidth) % totalWidth
       return position < -groundWidth ? position + totalWidth : position

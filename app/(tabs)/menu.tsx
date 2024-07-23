@@ -28,18 +28,18 @@ const Menu = () => {
 
   return (
     <SharedScreen isDarkened={false}>
-      <View className='flex-1'>
+      <View className="flex-1">
         <IconButton
           image={settings}
           onPress={handleSettingsClick}
-          containerStyles='absolute top-4 left-4 z-10'
+          containerStyles="absolute top-4 left-4 z-10"
           buttonStyles={'max-h-[36px] max-w-[36px]'}
         />
-        <View className='flex-1 justify-between items-center'>
-          <Image source={logo} resizeMode='cover' className='mt-16 max-h-[200px] max-w-[200px]' />
+        <View className="flex-1 justify-between items-center">
+          <Image source={logo} resizeMode="cover" className="mt-16 max-h-[200px] max-w-[200px]" />
         </View>
 
-        <View className='flex-1 justify-around items-center bottom-1'>
+        <View className="flex-1 justify-around items-center bottom-1">
           {btns.map((item, index) => (
             <CustomButton
               key={item.toString()}
