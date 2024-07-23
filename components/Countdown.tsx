@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { Group, Image, useImage } from '@shopify/react-native-skia'
 import { useDerivedValue, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated'
 
@@ -22,10 +22,6 @@ const Countdown: React.FC<Props> = ({ width, height, setStartGame, setCountdownW
   const imageWidth = width / 3
   const imageHeight = height / 3
 
-  useEffect(() => {
-    setTimeout(updateCountdown, 1000)
-  }, [])
-
   const currentImage = useDerivedValue(() => {
     if (countdownValue.value === 3) return number3
     if (countdownValue.value === 2) return number2
@@ -34,8 +30,7 @@ const Countdown: React.FC<Props> = ({ width, height, setStartGame, setCountdownW
 
   const transform = useDerivedValue(() => [{ scale: scale.value }], [scale])
 
-  const updateCountdown = () => {
-    // Fade out and shrink
+  const updateCountdown = useCallback(() => {
     opacity.value = withTiming(0, { duration: 250 })
     scale.value = withTiming(0.8, { duration: 250 }, finished => {
       if (finished) {
@@ -57,7 +52,11 @@ const Countdown: React.FC<Props> = ({ width, height, setStartGame, setCountdownW
         }
       }
     })
-  }
+  }, [countdownValue, onFinish, opacity, scale, setCountdownWasShowed, setStartGame])
+
+  useEffect(() => {
+    setTimeout(updateCountdown, 1000)
+  }, [updateCountdown])
 
   return (
     <Group transform={transform} origin={{ x: width / 2, y: height / 3 }}>
