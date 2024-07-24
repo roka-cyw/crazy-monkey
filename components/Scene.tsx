@@ -7,7 +7,7 @@ import { cancelAnimation, Easing, runOnJS, useSharedValue, withSequence, withTim
 import Countdown from './Countdown'
 import Grounds from './Grounds'
 import Monkey from './Monkey'
-// import Platforms from './Platforms'
+import Platforms from './Platforms'
 
 interface Props {
   width: number
@@ -111,7 +111,7 @@ const Scene: React.FC<Props> = ({ width, height }) => {
             <Countdown setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} {...screenDimensions} />
           )}
 
-          {/* <Platforms isStartGame={isStartGame} {...screenDimensions} /> */}
+          <Platforms isStartGame={isStartGame} {...screenDimensions} />
           <Grounds isStartGame={isStartGame} {...screenDimensions} />
           <Monkey isStartGame={isStartGame} {...monkeyProps} />
         </Canvas>
