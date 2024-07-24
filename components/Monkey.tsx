@@ -1,24 +1,39 @@
 import React from 'react'
-import { Image, useAnimatedImageValue, useImage } from '@shopify/react-native-skia'
+import { Group, Image, useAnimatedImageValue, useImage } from '@shopify/react-native-skia'
+import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
-interface Props {
-  width: number
-  height: number
+interface Props extends monkeyProps {
   isStartGame: boolean
 }
 
-const MONKEY_HEIGHT = 150
-const MONKEY_WIDTH = 120
+interface monkeyProps {
+  MONKEY_HEIGHT: number
+  MONKEY_WIDTH: number
+  groundLevel: number
+  monkeyY: SharedValue<number>
+}
 
-const Monkey: React.FC<Props> = ({ width, height, isStartGame }) => {
+const Monkey: React.FC<Props> = ({ isStartGame, MONKEY_HEIGHT, MONKEY_WIDTH, groundLevel, monkeyY }) => {
   const stand = useImage(require('../assets/monkey/stand.png'))
-
   const run = useAnimatedImageValue(require('../assets/monkey/run.gif'))
   const jump = useAnimatedImageValue(require('../assets/monkey/jump.gif'))
   const dead = useAnimatedImageValue(require('../assets/monkey/dead.gif'))
 
-  // TODO: y has test formula. It has to be changed after using the original assets instead of the actual
-  return <Image image={isStartGame ? run : stand} width={MONKEY_WIDTH} height={MONKEY_HEIGHT} x={0} y={height - MONKEY_HEIGHT / 1.12} />
+  const monkeyTransform = useDerivedValue(() => {
+    return [{ translateY: monkeyY.value }]
+  })
+
+  return (
+    <Group transform={monkeyTransform} origin={{ x: 0, y: groundLevel }}>
+      <Image
+        image={isStartGame ? (monkeyY.value < groundLevel ? jump : run) : stand}
+        width={MONKEY_WIDTH}
+        height={MONKEY_HEIGHT}
+        x={0}
+        y={0}
+      />
+    </Group>
+  )
 }
 
 export default Monkey

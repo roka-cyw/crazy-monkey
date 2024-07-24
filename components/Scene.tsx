@@ -1,38 +1,83 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useRouter } from 'expo-router'
 import { Canvas } from '@shopify/react-native-skia'
+import { cancelAnimation, Easing, runOnJS, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
 
 import Countdown from './Countdown'
 import Grounds from './Grounds'
 import Monkey from './Monkey'
+// import Platforms from './Platforms'
 
 interface Props {
   width: number
   height: number
 }
 
+const MONKEY_HEIGHT = 150
+const MONKEY_WIDTH = 120
+const JUMP_FORCE = 120
+const JUMP_DURATION = 500
+
 const Scene: React.FC<Props> = ({ width, height }) => {
   const router = useRouter()
   const [isStartGame, setStartGame] = useState(false)
   const [countdownWasShowed, setCountdownWasShowed] = useState(false)
 
+  // const gameOver = useSharedValue(false)
   const [gameOver, setGameOver] = useState(false)
-
-  const [darkened, setDarkened] = useState(true)
   const [showGameOver, setShowGameOver] = useState(false)
-  const [coins, setCoins] = useState(0)
 
-  useEffect(() => {
-    return () => handleRestart()
-  }, [])
+  const groundLevel = height - MONKEY_HEIGHT / 1.12
+  const monkeyY = useSharedValue(groundLevel)
+  const isJumping = useSharedValue(false)
+
+  const screenDimensions = {
+    width,
+    height
+  }
+
+  const monkeyProps = {
+    MONKEY_HEIGHT,
+    MONKEY_WIDTH,
+    groundLevel,
+    monkeyY
+  }
+
+  const jump = useCallback(() => {
+    if (!isJumping.value) {
+      isJumping.value = true
+      cancelAnimation(monkeyY)
+      monkeyY.value = withSequence(
+        withTiming(groundLevel - JUMP_FORCE, {
+          duration: JUMP_DURATION / 2,
+          easing: Easing.out(Easing.quad)
+        }),
+        withTiming(
+          groundLevel,
+          {
+            duration: JUMP_DURATION / 2,
+            easing: Easing.in(Easing.quad)
+          },
+          finished => {
+            if (finished) {
+              isJumping.value = false
+            }
+          }
+        )
+      )
+    }
+  }, [groundLevel, monkeyY, isJumping])
 
   const gesture = Gesture.Tap().onStart(() => {
     // if (gameOver.value) {
     if (gameOver) {
       restartGame()
     } else {
-      console.log('start animation')
+      console.log('jump !!')
+      if (isStartGame) {
+        runOnJS(jump)()
+      }
     }
   })
 
@@ -52,16 +97,23 @@ const Scene: React.FC<Props> = ({ width, height }) => {
     setShowGameOver(true)
   }
 
+  useEffect(() => {
+    monkeyY.value = groundLevel
+
+    return () => handleRestart()
+  }, [groundLevel, monkeyY])
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <GestureDetector gesture={gesture}>
         <Canvas style={{ width, height }}>
           {!countdownWasShowed && !isStartGame && (
-            <Countdown width={width} height={height} setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} />
+            <Countdown setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} {...screenDimensions} />
           )}
 
-          <Grounds width={width} height={height} isStartGame={isStartGame} />
-          <Monkey width={width} height={height} isStartGame={isStartGame} />
+          {/* <Platforms isStartGame={isStartGame} {...screenDimensions} /> */}
+          <Grounds isStartGame={isStartGame} {...screenDimensions} />
+          <Monkey isStartGame={isStartGame} {...monkeyProps} />
         </Canvas>
       </GestureDetector>
     </GestureHandlerRootView>
