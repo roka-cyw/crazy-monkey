@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react'
-import { useSharedValue, withRepeat, withTiming, Easing, cancelAnimation } from 'react-native-reanimated'
+import { useSharedValue, withRepeat, withTiming, Easing, cancelAnimation, useAnimatedReaction } from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
 import GroundPiece from './GroundPiece'
@@ -10,28 +10,41 @@ interface Props {
   isStartGame: boolean
 }
 
-const ANIMATION_DURATION = 6000
-const EXTRA_GROUNDS = 2 // just in case to overlap offsets
+const ANIMATION_DURATION = 8000
+const EXTRA_GROUNDS = 4 // just in case to overlap offsets
 
 const ORIGINAL_GROUND_WIDTH = 900
 const ORIGINAL_GROUND_HEIGHT = 176
 const ASPECT_RATIO = ORIGINAL_GROUND_WIDTH / ORIGINAL_GROUND_HEIGHT
 
 const Ground: React.FC<Props> = ({ width, height, isStartGame }) => {
-  const animationProgress = useSharedValue(0)
-
   const ground = useImage(require('@/assets/main-game/ground.png')) // TODO: update assets as ground2
+
+  const animationProgress = useSharedValue(0)
+  const fullCycleOfGrounds = useSharedValue(0)
 
   const groundHeight = Math.ceil(height / 8)
   const groundWidth = Math.ceil(height / 8) * Math.floor(ASPECT_RATIO)
   const numImages = Math.ceil(width / groundWidth) + EXTRA_GROUNDS
   const totalWidth = groundWidth * numImages
+  const groundYposition = height - groundHeight / 1.5
 
   const xAnimationProps = {
     totalWidth,
+    groundHeight,
     groundWidth,
-    animationProgress
+    animationProgress,
+    fullCycleOfGrounds
   }
+
+  useAnimatedReaction(
+    () => animationProgress.value,
+    currentValue => {
+      if (currentValue >= 1) {
+        fullCycleOfGrounds.value = fullCycleOfGrounds.value + 1
+      }
+    }
+  )
 
   const moveGrounds = useCallback(() => {
     animationProgress.value = withRepeat(withTiming(1, { duration: ANIMATION_DURATION, easing: Easing.linear }), -1, false)
@@ -40,21 +53,15 @@ const Ground: React.FC<Props> = ({ width, height, isStartGame }) => {
   useEffect(() => {
     if (isStartGame) moveGrounds()
 
-    return () => cancelAnimation(animationProgress)
-  }, [isStartGame, animationProgress, moveGrounds])
+    return () => {
+      cancelAnimation(animationProgress)
+    }
+  }, [isStartGame, animationProgress, moveGrounds, fullCycleOfGrounds])
 
   // TODO: change 6 to numImages. Now these numbers are equal but what if user use iPad?
   // for solving I have to get the  actual index[from 0 to 6] inside commented calculatePosition()
-  return Array.from({ length: 6 }, (_, index) => (
-    <GroundPiece
-      key={index}
-      ground={ground}
-      width={groundWidth}
-      height={groundHeight}
-      arrIndex={index}
-      y={height - groundHeight / 1.5}
-      {...xAnimationProps}
-    />
+  return Array.from({ length: 8 }, (_, index) => (
+    <GroundPiece key={index} height={height} width={width} ground={ground} arrIndex={index} y={groundYposition} {...xAnimationProps} />
   ))
 }
 

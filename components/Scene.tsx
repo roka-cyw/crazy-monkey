@@ -16,8 +16,8 @@ interface Props {
 
 const MONKEY_HEIGHT = 150
 const MONKEY_WIDTH = 120
-const JUMP_FORCE = 120
-const JUMP_DURATION = 500
+const JUMP_FORCE = 125
+const JUMP_DURATION = 550
 
 const Scene: React.FC<Props> = ({ width, height }) => {
   const router = useRouter()
@@ -111,7 +111,7 @@ const Scene: React.FC<Props> = ({ width, height }) => {
             <Countdown setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} {...screenDimensions} />
           )}
 
-          <Platforms isStartGame={isStartGame} {...screenDimensions} />
+          {/* <Platforms isStartGame={isStartGame} {...screenDimensions} /> */}
           <Grounds isStartGame={isStartGame} {...screenDimensions} />
           <Monkey isStartGame={isStartGame} {...monkeyProps} />
         </Canvas>
