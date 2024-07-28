@@ -1,6 +1,6 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { Image, SkImage } from '@shopify/react-native-skia'
-import { SharedValue, useDerivedValue, useAnimatedReaction } from 'react-native-reanimated'
+import { SharedValue, useDerivedValue, useAnimatedReaction, useSharedValue } from 'react-native-reanimated'
 
 import Stone from './Stone'
 
@@ -32,12 +32,12 @@ const GroundPiece: React.FC<Props> = ({
   mapAnimationProgress,
   fullCycleOfGrounds
 }) => {
-  let chanceOfStone = 0.8
-  let changeStonesEveryCycles = 2
-  let chanceUpdateStoneToTheNextCycle = 0.01 // 70% chance for next cycle
+  const chanceOfStone = 0.35
+  const changeStonesEveryCycles = 1
+  const chanceUpdateStoneToTheNextCycle = 0.3
 
-  const hasStoneCurrentRef = useRef(Math.random() > chanceOfStone)
-  const hasStoneFutureRef = useRef(Math.random() > chanceOfStone)
+  const hasStone = useSharedValue(Math.random() > chanceOfStone)
+  const pendingStoneUpdate = useSharedValue(false)
 
   const x = useDerivedValue(() => {
     const position = (-totalGroundWidth * mapAnimationProgress.value + arrIndex * groundWidth) % totalGroundWidth
@@ -47,46 +47,29 @@ const GroundPiece: React.FC<Props> = ({
   useAnimatedReaction(
     () => fullCycleOfGrounds.value,
     (currentCycle, previousCycle) => {
-      // console.log(currentCycle, '++++++++++++++', currentCycle % changeStonesEveryCycles)
-
       if (currentCycle !== previousCycle && currentCycle % changeStonesEveryCycles === 0) {
-        // console.log(hasStoneCurrentRef.current)
-        // console.log('222', showStone.value)
-
-        // console.log(hasStoneCurrentRef.current, hasStoneFutureRef.current)
-
-        hasStoneCurrentRef.current = hasStoneFutureRef.current
-        hasStoneFutureRef.current = Math.random() > chanceUpdateStoneToTheNextCycle
-        // console.log('new random', Math.random() > chanceUpdateStoneToTheNextCycle)
+        pendingStoneUpdate.value = true
       }
     }
   )
 
-  const isEnteringScreen = useDerivedValue(() => {
-    return x.value >= width - groundWidth && x.value < width
-  })
-
-  const isLeavingScreen = useDerivedValue(() => {
-    return x.value >= -groundWidth && x.value < 0
+  const isOffScreen = useDerivedValue(() => {
+    return x.value <= -groundWidth || x.value >= width
   })
 
   const showStone = useDerivedValue(() => {
-    if (isEnteringScreen.value) {
-      return hasStoneCurrentRef.current
+    if (isOffScreen.value && pendingStoneUpdate.value) {
+      hasStone.value = Math.random() < chanceUpdateStoneToTheNextCycle
+      pendingStoneUpdate.value = false
     }
-    if (isLeavingScreen.value) {
-      return false
-    }
-    return hasStoneCurrentRef.current
+
+    return hasStone.value && x.value < width
   })
 
   return (
     <>
       <Image image={ground} width={groundWidth} height={groundHeight} x={x} y={y} />
-      {showStone.value && <Stone height={height} x={x} />}
-
-      {arrIndex === 0 && console.log('-------------------------------------')}
-      {console.log(showStone.value, 'INDEX', arrIndex)}
+      <Stone height={height} x={x} showStone={showStone} />
     </>
   )
 }
