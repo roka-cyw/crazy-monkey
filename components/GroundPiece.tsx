@@ -13,10 +13,10 @@ interface Props extends xAnimationProps {
 }
 
 interface xAnimationProps {
-  totalWidth: number
+  totalGroundWidth: number
   groundWidth: number
   groundHeight: number
-  animationProgress: SharedValue<number>
+  mapAnimationProgress: SharedValue<number>
   fullCycleOfGrounds: SharedValue<number>
 }
 
@@ -26,30 +26,38 @@ const GroundPiece: React.FC<Props> = ({
   ground,
   arrIndex,
   y,
-  totalWidth,
+  totalGroundWidth,
   groundHeight,
   groundWidth,
-  animationProgress,
+  mapAnimationProgress,
   fullCycleOfGrounds
 }) => {
   let chanceOfStone = 0.8
-  let changeStonesEveryCycles = 3
-  let chanceUpdateStoneToTheNextCycle = 0.3 // 70% chance for next cycle
+  let changeStonesEveryCycles = 2
+  let chanceUpdateStoneToTheNextCycle = 0.01 // 70% chance for next cycle
 
   const hasStoneCurrentRef = useRef(Math.random() > chanceOfStone)
   const hasStoneFutureRef = useRef(Math.random() > chanceOfStone)
 
   const x = useDerivedValue(() => {
-    const position = (-totalWidth * animationProgress.value + arrIndex * groundWidth) % totalWidth
-    return position < -groundWidth ? position + totalWidth : position
+    const position = (-totalGroundWidth * mapAnimationProgress.value + arrIndex * groundWidth) % totalGroundWidth
+    return position < -groundWidth ? position + totalGroundWidth : position
   })
 
   useAnimatedReaction(
     () => fullCycleOfGrounds.value,
     (currentCycle, previousCycle) => {
+      // console.log(currentCycle, '++++++++++++++', currentCycle % changeStonesEveryCycles)
+
       if (currentCycle !== previousCycle && currentCycle % changeStonesEveryCycles === 0) {
+        // console.log(hasStoneCurrentRef.current)
+        // console.log('222', showStone.value)
+
+        // console.log(hasStoneCurrentRef.current, hasStoneFutureRef.current)
+
         hasStoneCurrentRef.current = hasStoneFutureRef.current
         hasStoneFutureRef.current = Math.random() > chanceUpdateStoneToTheNextCycle
+        // console.log('new random', Math.random() > chanceUpdateStoneToTheNextCycle)
       }
     }
   )
@@ -76,6 +84,9 @@ const GroundPiece: React.FC<Props> = ({
     <>
       <Image image={ground} width={groundWidth} height={groundHeight} x={x} y={y} />
       {showStone.value && <Stone height={height} x={x} />}
+
+      {arrIndex === 0 && console.log('-------------------------------------')}
+      {console.log(showStone.value, 'INDEX', arrIndex)}
     </>
   )
 }
