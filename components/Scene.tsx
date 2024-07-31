@@ -23,29 +23,37 @@ const ORIGINAL_GROUND_WIDTH = 900
 const ORIGINAL_GROUND_HEIGHT = 176
 const GROUND_ASPECT_RATIO = ORIGINAL_GROUND_WIDTH / ORIGINAL_GROUND_HEIGHT
 const EXTRA_GROUNDS = 4 // just in case to overlap offsets
+const CYCLES_BEFORE_PLATFORMS = 3
+
+const PLATFORM_ORIGINAL_WIDTH = 343
+const PLATFORM_ORIGINAL_HEIGHT = 77
+const PLATFROM_ASPECT_RATIO = PLATFORM_ORIGINAL_WIDTH / PLATFORM_ORIGINAL_HEIGHT
 
 const Scene: React.FC<Props> = ({ width, height }) => {
   const router = useRouter()
+
   const [isStartGame, setStartGame] = useState(false)
   const [countdownWasShowed, setCountdownWasShowed] = useState(false)
-  const mapAnimationProgress = useSharedValue(0)
-  const fullCycleOfGrounds = useSharedValue(0)
-  // const showPlatforms = useSharedValue(false)
-  const [showPlatforms, setShowPlatforms] = useState(false)
-
   // const gameOver = useSharedValue(false)
   const [gameOver, setGameOver] = useState(false)
   const [showGameOver, setShowGameOver] = useState(false)
 
+  const mapAnimationProgress = useSharedValue(0)
+  const fullCycleOfGrounds = useSharedValue(0)
+  // const showPlatforms = useSharedValue(false)
   const groundLevel = height - MONKEY_HEIGHT / 1.12
-  const monkeyY = useSharedValue(groundLevel)
-  const isJumping = useSharedValue(false)
-
   const groundHeight = Math.ceil(height / 8)
   const groundWidth = Math.ceil(height / 8) * Math.floor(GROUND_ASPECT_RATIO)
   const numImages = Math.ceil(width / groundWidth) + EXTRA_GROUNDS
   const totalGroundWidth = groundWidth * numImages
   const groundYposition = height - groundHeight / 1.5
+
+  const [showPlatforms, setShowPlatforms] = useState(false)
+  const platformHeight = Math.ceil(height / 14)
+  const platformWidth = Math.ceil(height / 14) * Math.floor(PLATFROM_ASPECT_RATIO)
+
+  const monkeyY = useSharedValue(groundLevel)
+  const isJumping = useSharedValue(false)
 
   const screenDimensions = {
     width,
@@ -67,7 +75,11 @@ const Scene: React.FC<Props> = ({ width, height }) => {
     groundYposition
   }
 
-  const CYCLES_BEFORE_PLATFORMS = 3
+  const platformDimensions = {
+    platformHeight,
+    platformWidth,
+    totalGroundWidth
+  }
 
   useAnimatedReaction(
     () => mapAnimationProgress.value,
@@ -81,7 +93,8 @@ const Scene: React.FC<Props> = ({ width, height }) => {
   useAnimatedReaction(
     () => fullCycleOfGrounds.value,
     currentCycle => {
-      if (currentCycle >= CYCLES_BEFORE_PLATFORMS) {
+      if (true) {
+        // if (currentCycle >= CYCLES_BEFORE_PLATFORMS) {
         runOnJS(setShowPlatforms)(true)
       }
     }
@@ -159,7 +172,7 @@ const Scene: React.FC<Props> = ({ width, height }) => {
               isStartGame={isStartGame}
               mapAnimationProgress={mapAnimationProgress}
               fullCycleOfGrounds={fullCycleOfGrounds}
-              totalGroundWidth={totalGroundWidth}
+              {...platformDimensions}
               {...screenDimensions}
             />
           )}
@@ -171,6 +184,7 @@ const Scene: React.FC<Props> = ({ width, height }) => {
             {...groundDimensions}
             {...screenDimensions}
           />
+
           <Monkey isStartGame={isStartGame} {...monkeyProps} />
         </Canvas>
       </GestureDetector>

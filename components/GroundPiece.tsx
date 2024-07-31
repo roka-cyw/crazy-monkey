@@ -33,7 +33,7 @@ const GroundPiece: React.FC<Props> = ({
   fullCycleOfGrounds
 }) => {
   const chanceOfStone = 0.35
-  const changeStonesEveryCycles = 1
+  const changeStonesEveryCycles = 2
   const chanceUpdateStoneToTheNextCycle = 0.3
 
   const hasStone = useSharedValue(Math.random() > chanceOfStone)

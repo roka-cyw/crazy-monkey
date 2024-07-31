@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect } from 'react'
-import { useSharedValue, withRepeat, withTiming, Easing, cancelAnimation, useAnimatedReaction, SharedValue } from 'react-native-reanimated'
+import { withRepeat, withTiming, Easing, cancelAnimation, SharedValue } from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
 import GroundPiece from './GroundPiece'
