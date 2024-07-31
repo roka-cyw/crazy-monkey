@@ -125,17 +125,27 @@ const Scene: React.FC<Props> = ({ width, height }) => {
     }
   }, [groundLevel, monkeyY, isJumping])
 
-  const gesture = Gesture.Tap().onStart(() => {
-    // if (gameOver.value) {
-    if (gameOver) {
-      restartGame()
-    } else {
-      console.log('jump !!')
-      if (isStartGame) {
-        runOnJS(jump)()
+  const gesture = Gesture.Race(
+    Gesture.Tap().onStart(() => {
+      // if (gameOver.value) {
+      if (gameOver) {
+        restartGame()
+      } else {
+        console.log('jump !!')
+        if (isStartGame) {
+          runOnJS(jump)()
+        }
       }
-    }
-  })
+    }),
+    Gesture.Pan()
+      .activeOffsetY(10) // Adjust this value to set the minimum swipe distance
+      .onStart(e => {
+        if (!gameOver && isStartGame && e.velocityY > 0) {
+          console.log('swipe down !!')
+          // runOnJS(swipeDown)()
+        }
+      })
+  )
 
   const restartGame = () => console.log('RESTART GAME')
 
