@@ -2,6 +2,7 @@ import React from 'react'
 import { Image, SkImage } from '@shopify/react-native-skia'
 import { SharedValue, useDerivedValue, useAnimatedReaction, useSharedValue } from 'react-native-reanimated'
 
+import { CollisionObject } from '@/hooks/useCollisionSystem'
 import Stone from './Stone'
 
 interface Props extends xAnimationProps {
@@ -10,6 +11,8 @@ interface Props extends xAnimationProps {
   ground: SkImage | null
   arrIndex: number
   y: number
+  addCollisionObject: (obj: CollisionObject) => void
+  removeCollisionObject: (id: string) => void
 }
 
 interface xAnimationProps {
@@ -30,7 +33,9 @@ const GroundPiece: React.FC<Props> = ({
   groundHeight,
   groundWidth,
   mapAnimationProgress,
-  fullCycleOfGrounds
+  fullCycleOfGrounds,
+  addCollisionObject,
+  removeCollisionObject
 }) => {
   const chanceOfStone = 0.35
   const changeStonesEveryCycles = 2
@@ -69,7 +74,14 @@ const GroundPiece: React.FC<Props> = ({
   return (
     <>
       <Image image={ground} width={groundWidth} height={groundHeight} x={x} y={y} />
-      <Stone height={height} x={x} showStone={showStone} />
+      <Stone
+        height={height}
+        x={x}
+        showStone={showStone}
+        addCollisionObject={addCollisionObject}
+        removeCollisionObject={removeCollisionObject}
+        arrIndex={arrIndex}
+      />
     </>
   )
 }

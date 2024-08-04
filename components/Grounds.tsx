@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react'
 import { withRepeat, withTiming, Easing, cancelAnimation, SharedValue } from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
+import { CollisionObject } from '@/hooks/useCollisionSystem'
 import GroundPiece from './GroundPiece'
 
 interface Props extends groundDimensions {
@@ -9,6 +10,8 @@ interface Props extends groundDimensions {
   height: number
   isStartGame: boolean
   mapAnimationProgress: SharedValue<number>
+  addCollisionObject: (obj: CollisionObject) => void
+  removeCollisionObject: (id: string) => void
 }
 
 interface groundDimensions {
@@ -32,7 +35,9 @@ const Ground: React.FC<Props> = ({
   numImages,
   totalGroundWidth,
   groundYposition,
-  fullCycleOfGrounds
+  fullCycleOfGrounds,
+  addCollisionObject,
+  removeCollisionObject
 }) => {
   const ground = useImage(require('@/assets/main-game/ground.png')) // TODO: update assets as ground2
 
@@ -59,7 +64,17 @@ const Ground: React.FC<Props> = ({
   // TODO: change 6 to numImages. Now these numbers are equal but what if user use iPad?
   // for solving I have to get the  actual index[from 0 to 6] inside commented calculatePosition()
   return Array.from({ length: 8 }, (_, index) => (
-    <GroundPiece key={index} height={height} width={width} ground={ground} arrIndex={index} y={groundYposition} {...xAnimationProps} />
+    <GroundPiece
+      key={index}
+      height={height}
+      width={width}
+      ground={ground}
+      arrIndex={index}
+      y={groundYposition}
+      addCollisionObject={addCollisionObject}
+      removeCollisionObject={removeCollisionObject}
+      {...xAnimationProps}
+    />
   ))
 }
 

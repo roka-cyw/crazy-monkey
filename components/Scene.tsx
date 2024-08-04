@@ -1,13 +1,23 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler'
 import { useRouter } from 'expo-router'
-import { Canvas } from '@shopify/react-native-skia'
-import { cancelAnimation, Easing, runOnJS, useAnimatedReaction, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
+import { Canvas, Rect } from '@shopify/react-native-skia'
+import {
+  cancelAnimation,
+  Easing,
+  runOnJS,
+  useAnimatedReaction,
+  useDerivedValue,
+  useSharedValue,
+  withSequence,
+  withTiming
+} from 'react-native-reanimated'
 
 import Countdown from './Countdown'
 import Grounds from './Grounds'
 import Monkey from './Monkey'
 import Platforms from './Platforms'
+import { useCollisionSystem } from '@/hooks/useCollisionSystem'
 
 interface Props {
   width: number
@@ -54,6 +64,20 @@ const Scene: React.FC<Props> = ({ width, height }) => {
 
   const monkeyY = useSharedValue(groundLevel)
   const isJumping = useSharedValue(false)
+
+  const collisionMonkeyY = useDerivedValue(() => monkeyY.value + MONKEY_HEIGHT * 0.25)
+  const collisionMonkeyX = useDerivedValue(() => MONKEY_WIDTH * 0.5)
+  const collisionMonkeyHeight = useDerivedValue(() => MONKEY_HEIGHT * 0.4)
+  const collisionMonkeyWidth = useDerivedValue(() => MONKEY_WIDTH * 0.25)
+
+  const collisionMonkey = useDerivedValue(() => ({
+    x: collisionMonkeyX.value,
+    y: collisionMonkeyY.value,
+    width: collisionMonkeyWidth.value,
+    height: collisionMonkeyHeight.value
+  }))
+
+  const { addCollisionObject, removeCollisionObject } = useCollisionSystem(collisionMonkey)
 
   const screenDimensions = {
     width,
@@ -176,7 +200,6 @@ const Scene: React.FC<Props> = ({ width, height }) => {
           {!countdownWasShowed && !isStartGame && (
             <Countdown setStartGame={setStartGame} setCountdownWasShowed={setCountdownWasShowed} {...screenDimensions} />
           )}
-
           {showPlatforms && (
             <Platforms
               isStartGame={isStartGame}
@@ -186,16 +209,28 @@ const Scene: React.FC<Props> = ({ width, height }) => {
               {...screenDimensions}
             />
           )}
-
           <Grounds
             isStartGame={isStartGame}
             mapAnimationProgress={mapAnimationProgress}
             fullCycleOfGrounds={fullCycleOfGrounds}
+            addCollisionObject={addCollisionObject}
+            removeCollisionObject={removeCollisionObject}
             {...groundDimensions}
             {...screenDimensions}
           />
-
           <Monkey isStartGame={isStartGame} {...monkeyProps} />
+
+          {/* // Debug monkey dimesions */}
+          <Rect
+            x={collisionMonkeyX}
+            y={collisionMonkeyY}
+            width={collisionMonkeyWidth}
+            height={collisionMonkeyHeight}
+            color="rgba(255, 0, 255, 0.5)"
+            style="stroke"
+            strokeWidth={3}
+            strokeColor="red"
+          />
         </Canvas>
       </GestureDetector>
     </GestureHandlerRootView>

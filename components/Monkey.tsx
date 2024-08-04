@@ -1,5 +1,5 @@
 import React from 'react'
-import { Group, Image, useAnimatedImageValue, useImage } from '@shopify/react-native-skia'
+import { Group, Image, Rect, useAnimatedImageValue, useImage } from '@shopify/react-native-skia'
 import { SharedValue, useDerivedValue } from 'react-native-reanimated'
 
 interface Props extends monkeyProps {
@@ -24,15 +24,18 @@ const Monkey: React.FC<Props> = ({ isStartGame, MONKEY_HEIGHT, MONKEY_WIDTH, gro
   })
 
   return (
-    <Group transform={monkeyTransform} origin={{ x: 0, y: groundLevel }}>
-      <Image
-        image={isStartGame ? (monkeyY.value < groundLevel ? jump : run) : stand}
-        width={MONKEY_WIDTH}
-        height={MONKEY_HEIGHT}
-        x={0}
-        y={0}
-      />
-    </Group>
+    <>
+      <Group transform={monkeyTransform} origin={{ x: 0, y: groundLevel }}>
+        <Image
+          image={isStartGame ? (monkeyY.value < groundLevel ? jump : run) : stand}
+          width={MONKEY_WIDTH}
+          height={MONKEY_HEIGHT}
+          x={0}
+          y={0}
+        />
+      </Group>
+      {/* <Rect x={40} y={groundLevel} width={MONKEY_WIDTH / 2} height={MONKEY_HEIGHT} color="rgba(255, 0, 255, 0.5)" /> */}
+    </>
   )
 }
 
