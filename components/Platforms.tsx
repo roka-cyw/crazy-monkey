@@ -2,6 +2,8 @@ import React from 'react'
 import { SharedValue } from 'react-native-reanimated'
 import { useImage } from '@shopify/react-native-skia'
 
+import { CollisionObject } from '@/hooks/useCollisionSystem'
+
 import Platform from './Platform'
 
 interface Props extends platformDimensions {
@@ -9,6 +11,8 @@ interface Props extends platformDimensions {
   height: number
   isStartGame: boolean
   mapAnimationProgress: SharedValue<number>
+  addCollisionObject: (obj: CollisionObject) => void
+  removeCollisionObject: (id: string) => void
 }
 
 interface platformDimensions {
@@ -19,13 +23,15 @@ interface platformDimensions {
 }
 
 // Probably move to Scene
-const PLATFORM_COUNT = 5
+const PLATFORM_COUNT = 8
 
 const Platforms: React.FC<Props> = ({
   width,
   height,
   isStartGame,
   mapAnimationProgress,
+  addCollisionObject,
+  removeCollisionObject,
   platformHeight,
   platformWidth,
   totalGroundWidth,
@@ -34,7 +40,16 @@ const Platforms: React.FC<Props> = ({
   const platformImage = useImage(require('@/assets/main-game/platfrom.png'))
 
   // Probably move ove to Scene
-  const platformYPositions = [height * 0.75, height * 0.65, height * 0.55, height * 0.45, height * 0.35] // Adjust as needed
+  const platformYPositions = [
+    height * 0.75,
+    height * 0.75,
+    height * 0.75,
+    height * 0.75,
+    height * 0.75,
+    height * 0.75,
+    height * 0.75,
+    height * 0.75
+  ] // Adjust as needed
 
   const xAnimationProps = {
     totalGroundWidth,
@@ -45,7 +60,16 @@ const Platforms: React.FC<Props> = ({
   }
 
   return Array.from({ length: PLATFORM_COUNT }, (_, index) => (
-    <Platform key={index} width={width} platform={platformImage} arrIndex={index} y={platformYPositions[index]} {...xAnimationProps} />
+    <Platform
+      key={index}
+      width={width}
+      platform={platformImage}
+      arrIndex={index}
+      y={platformYPositions[index]}
+      addCollisionObject={addCollisionObject}
+      removeCollisionObject={removeCollisionObject}
+      {...xAnimationProps}
+    />
   ))
 }
 

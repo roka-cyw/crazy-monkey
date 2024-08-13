@@ -77,7 +77,21 @@ const Scene: React.FC<Props> = ({ width, height }) => {
     height: collisionMonkeyHeight.value
   }))
 
-  const { addCollisionObject, removeCollisionObject } = useCollisionSystem(collisionMonkey)
+  // const monkeyPosition = useSharedValue({ x: 0, y: 0, width: 50, height: 50 });
+
+  const updateMonkeyPosition = useCallback(
+    (newY: number) => {
+      // collisionMonkey.value = {
+      //   ...collisionMonkey.value,
+      //   y: newY
+      // }
+
+      monkeyY.value = newY
+    },
+    [monkeyY]
+  )
+
+  const { addCollisionObject, removeCollisionObject } = useCollisionSystem(collisionMonkey, updateMonkeyPosition)
 
   const screenDimensions = {
     width,
@@ -205,6 +219,8 @@ const Scene: React.FC<Props> = ({ width, height }) => {
               isStartGame={isStartGame}
               mapAnimationProgress={mapAnimationProgress}
               fullCycleOfGrounds={fullCycleOfGrounds}
+              addCollisionObject={addCollisionObject}
+              removeCollisionObject={removeCollisionObject}
               {...platformDimensions}
               {...screenDimensions}
             />
